@@ -1,0 +1,159 @@
+Assuming unrestricted shared filesystem usage.
+None
+host: grhd-001
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 50
+Rules claiming more threads will be scaled down.
+Provided resources: gpu=1
+Job stats:
+job                       count
+----------------------  -------
+all                           1
+encode                        2
+filter_genes                  2
+log10_transform               2
+process_encoder               2
+quantile_normalization        2
+total                        11
+
+Select jobs to execute...
+Execute 2 jobs...
+[Wed Oct  8 17:11:40 2025]
+localrule filter_genes:
+    input: Input_files/Sandbox_CMP_Trunk_02.tsv
+    output: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_02.gene_filter_order.tsv
+    jobid: 10
+    reason: Missing output files: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_02.gene_filter_order.tsv
+    wildcards: sample=Sandbox_CMP_Trunk_02
+    resources: tmpdir=/tmp
+[Wed Oct  8 17:11:40 2025]
+localrule filter_genes:
+    input: Input_files/Sandbox_CMP_Trunk_01.tsv
+    output: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_01.gene_filter_order.tsv
+    jobid: 5
+    reason: Missing output files: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_01.gene_filter_order.tsv
+    wildcards: sample=Sandbox_CMP_Trunk_01
+    resources: tmpdir=/tmp
+[Wed Oct  8 17:11:50 2025]
+Finished jobid: 10 (Rule: filter_genes)
+1 of 11 steps (9%) done
+Select jobs to execute...
+Execute 1 jobs...
+[Wed Oct  8 17:11:50 2025]
+localrule quantile_normalization:
+    input: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_02.gene_filter_order.tsv
+    output: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_02.Ref_Normalized_CPM.tsv
+    jobid: 9
+    reason: Missing output files: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_02.Ref_Normalized_CPM.tsv; Input files updated by another job: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_02.gene_filter_order.tsv
+    wildcards: sample=Sandbox_CMP_Trunk_02
+    resources: tmpdir=/tmp
+[Wed Oct  8 17:11:50 2025]
+Finished jobid: 5 (Rule: filter_genes)
+2 of 11 steps (18%) done
+Select jobs to execute...
+Execute 1 jobs...
+[Wed Oct  8 17:11:50 2025]
+localrule quantile_normalization:
+    input: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_01.gene_filter_order.tsv
+    output: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_01.Ref_Normalized_CPM.tsv
+    jobid: 4
+    reason: Missing output files: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_01.Ref_Normalized_CPM.tsv; Input files updated by another job: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_01.gene_filter_order.tsv
+    wildcards: sample=Sandbox_CMP_Trunk_01
+    resources: tmpdir=/tmp
+[Wed Oct  8 17:11:52 2025]
+Finished jobid: 4 (Rule: quantile_normalization)
+3 of 11 steps (27%) done
+Select jobs to execute...
+Execute 1 jobs...
+[Wed Oct  8 17:11:52 2025]
+localrule log10_transform:
+    input: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_01.Ref_Normalized_CPM.tsv
+    output: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_01.log10_Ref_Normalized_CPM.tsv
+    jobid: 3
+    reason: Missing output files: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_01.log10_Ref_Normalized_CPM.tsv; Input files updated by another job: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_01.Ref_Normalized_CPM.tsv
+    wildcards: sample=Sandbox_CMP_Trunk_01
+    resources: tmpdir=/tmp
+[Wed Oct  8 17:11:52 2025]
+Finished jobid: 9 (Rule: quantile_normalization)
+4 of 11 steps (36%) done
+Select jobs to execute...
+Execute 1 jobs...
+[Wed Oct  8 17:11:52 2025]
+localrule log10_transform:
+    input: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_02.Ref_Normalized_CPM.tsv
+    output: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_02.log10_Ref_Normalized_CPM.tsv
+    jobid: 8
+    reason: Missing output files: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_02.log10_Ref_Normalized_CPM.tsv; Input files updated by another job: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_02.Ref_Normalized_CPM.tsv
+    wildcards: sample=Sandbox_CMP_Trunk_02
+    resources: tmpdir=/tmp
+[Wed Oct  8 17:11:53 2025]
+Finished jobid: 3 (Rule: log10_transform)
+5 of 11 steps (45%) done
+Select jobs to execute...
+Execute 1 jobs...
+[Wed Oct  8 17:11:53 2025]
+localrule encode:
+    input: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_01.log10_Ref_Normalized_CPM.tsv
+    output: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_01.encoder.tsv
+    jobid: 2
+    reason: Missing output files: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_01.encoder.tsv; Input files updated by another job: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_01.log10_Ref_Normalized_CPM.tsv
+    wildcards: sample=Sandbox_CMP_Trunk_01
+    resources: tmpdir=/tmp
+[Wed Oct  8 17:11:53 2025]
+Finished jobid: 8 (Rule: log10_transform)
+6 of 11 steps (55%) done
+Select jobs to execute...
+Execute 1 jobs...
+[Wed Oct  8 17:11:53 2025]
+localrule encode:
+    input: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_02.log10_Ref_Normalized_CPM.tsv
+    output: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_02.encoder.tsv
+    jobid: 7
+    reason: Missing output files: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_02.encoder.tsv; Input files updated by another job: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_02.log10_Ref_Normalized_CPM.tsv
+    wildcards: sample=Sandbox_CMP_Trunk_02
+    resources: tmpdir=/tmp
+[Wed Oct  8 17:12:03 2025]
+Finished jobid: 2 (Rule: encode)
+7 of 11 steps (64%) done
+Select jobs to execute...
+Execute 1 jobs...
+[Wed Oct  8 17:12:03 2025]
+localrule process_encoder:
+    input: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_01.encoder.tsv
+    output: Outputs_2025-10-08-1711/Pred_Phenotype/Sandbox_CMP_Trunk_01.Phenotype_Pred.tsv
+    jobid: 1
+    reason: Missing output files: Outputs_2025-10-08-1711/Pred_Phenotype/Sandbox_CMP_Trunk_01.Phenotype_Pred.tsv; Input files updated by another job: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_01.encoder.tsv
+    wildcards: sample=Sandbox_CMP_Trunk_01
+    resources: tmpdir=/tmp
+[Wed Oct  8 17:12:04 2025]
+Finished jobid: 7 (Rule: encode)
+8 of 11 steps (73%) done
+Select jobs to execute...
+Execute 1 jobs...
+[Wed Oct  8 17:12:04 2025]
+localrule process_encoder:
+    input: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_02.encoder.tsv
+    output: Outputs_2025-10-08-1711/Pred_Phenotype/Sandbox_CMP_Trunk_02.Phenotype_Pred.tsv
+    jobid: 6
+    reason: Missing output files: Outputs_2025-10-08-1711/Pred_Phenotype/Sandbox_CMP_Trunk_02.Phenotype_Pred.tsv; Input files updated by another job: Outputs_2025-10-08-1711/Encoder/Sandbox_CMP_Trunk_02.encoder.tsv
+    wildcards: sample=Sandbox_CMP_Trunk_02
+    resources: tmpdir=/tmp
+[Wed Oct  8 17:12:05 2025]
+Finished jobid: 1 (Rule: process_encoder)
+9 of 11 steps (82%) done
+[Wed Oct  8 17:12:05 2025]
+Finished jobid: 6 (Rule: process_encoder)
+10 of 11 steps (91%) done
+Select jobs to execute...
+Execute 1 jobs...
+[Wed Oct  8 17:12:05 2025]
+localrule all:
+    input: Outputs_2025-10-08-1711/Pred_Phenotype/Sandbox_CMP_Trunk_01.Phenotype_Pred.tsv, Outputs_2025-10-08-1711/Pred_Phenotype/Sandbox_CMP_Trunk_02.Phenotype_Pred.tsv
+    jobid: 0
+    reason: Input files updated by another job: Outputs_2025-10-08-1711/Pred_Phenotype/Sandbox_CMP_Trunk_01.Phenotype_Pred.tsv, Outputs_2025-10-08-1711/Pred_Phenotype/Sandbox_CMP_Trunk_02.Phenotype_Pred.tsv
+    resources: tmpdir=/tmp
+[Wed Oct  8 17:12:05 2025]
+Finished jobid: 0 (Rule: all)
+11 of 11 steps (100%) done
+Complete log(s): /mnt/stor-vol01/pjiang/Projects/DARPA/AI_Modeling/Pipeline_Seq2Pheno/Seq2Pheno_0.2/.snakemake/log/2025-10-08T171140.557565.snakemake.log
