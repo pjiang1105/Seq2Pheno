@@ -11,7 +11,7 @@
 
 ## Introduction
 
-Tissue phenotypes such as fibrosis, macrophage polarization, and regenerative responses are commonly evaluated using histological methods such as hematoxylin–eosin staining and immunohistochemistry. While informative, these approaches are labor-intensive, costly, and often impractical for frozen biobank specimens. RNA-seq, by contrast, offers scalable and cost-effective transcriptomic profiling but lacks direct phenotypic readouts.  
+Tissue phenotypes such as fibrosis, macrophage polarization, and regenerative responses are commonly evaluated using histological methods such as Masson’s Trichrome staining and immunohistochemistry. While informative, these approaches are labor-intensive, costly, and often impractical for frozen biobank specimens. RNA-seq, by contrast, offers scalable and cost-effective transcriptomic profiling but lacks direct phenotypic readouts.  
 
 To address this gap, we developed **Seq2Pheno**, an AI/ML framework designed to provide quantitative estimates of tissue phenotypes from transcriptomic profiles. Seq2Pheno operates in two stages. In the first stage, an encoder–decoder was trained on RNA-seq profiles from 751 canine wound-healing biopsies spanning diverse biological and perturbation contexts. This step compressed high-dimensional transcriptomes into a compact latent representation that distilled core biological signals while retaining the ability to reconstruct the original data. In the second stage, subsets of samples with paired histological measurements were used to train and evaluate phenotype-prediction models. Phenotypes included fibrosis markers (e.g., α-SMA), fibrosis burden estimates (e.g., percent fibrosis and semi-quantitative scoring), immunoregulatory macrophages (CD163), macrophage activation (IBA-1 and MAC387), pro-inflammatory cytokine (TNF-α), and regenerative markers such as PAX7.
 
@@ -117,7 +117,7 @@ Seq2Pheno leverages Snakemake’s integrated Python script execution, automatica
 
 ---
 
-## 🧩 Quick Start (Aligned with Included Example Data)
+## 🧩 Quick Start (Example input data can be found in Input_files sub-folder)
 
 This quick start runs the full pipeline on the **two included example matrices** located in `Input_files/`:
 - `Sandbox_CMP_Trunk_01.tsv`
@@ -222,7 +222,7 @@ Input_files/
 ---
 
 ## 📝 Citation
-Jiang, P. et al. *Seq2Pheno: Predicting Tissue Phenotypes from RNA-seq Data.* (2025)
+Jiang, P. et al. (2025) *Seq2Pheno: Predicting Tissue Phenotypes from RNA-seq Data.*
 
 ---
 
