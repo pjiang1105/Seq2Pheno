@@ -1,4 +1,4 @@
-<h1 align="center">Seq2Pheno: an AI/ML-based pipeline to predict tissue phenotypes from RNA-seq data</h1>
+<h1 align="center">Seq2Pheno: An AI/ML Framework for Predicting Immunological and Histological Tissue Phenotypes from RNA-seq Data</h1>
 
 <p align="center">
   Developed by <strong>Peng Jiang, Ph.D.</strong><br>
