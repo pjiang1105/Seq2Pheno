@@ -7,6 +7,7 @@ timestamp = datetime.now().strftime('%Y-%m-%d-%H%M')
 
 # Define directories
 INPUT_DIR = "Input_files"
+REF_DIR = os.environ.get("SEQ2PHENO_REF_DIR", "Ref")
 ENCODER_OUTPUT_DIR = f"Outputs_{timestamp}/Encoder"
 PHENOTYPE_OUTPUT_DIR = f"Outputs_{timestamp}/Pred_Phenotype"
 
@@ -30,7 +31,7 @@ rule filter_genes:
     output:
         os.path.join(ENCODER_OUTPUT_DIR, "{sample}.gene_filter_order.tsv")
     shell:
-        "python3 ./bin/1_filter_genes_with_order.py {input} -o {output}"
+        "python3 ./bin/1_filter_genes_with_order.py {input} -o {output} --ref-dir {REF_DIR}"
 
 # Step 2: Quantile normalization
 rule quantile_normalization:
@@ -39,7 +40,7 @@ rule quantile_normalization:
     output:
         os.path.join(ENCODER_OUTPUT_DIR, "{sample}.Ref_Normalized_CPM.tsv")
     shell:
-        "python3 ./bin/2_Ref_quantile_Normalization.py {input} {output}"
+        "python3 ./bin/2_Ref_quantile_Normalization.py {input} {output} --ref-dir {REF_DIR}"
 
 # Step 3: Log10 transform
 rule log10_transform:
@@ -57,7 +58,7 @@ rule encode:
     output:
         os.path.join(ENCODER_OUTPUT_DIR, "{sample}.encoder.tsv")
     shell:
-        "python3 ./bin/4_Encoder.py {input} {output}"
+        "python3 ./bin/4_Encoder.py {input} {output} --ref-dir {REF_DIR}"
 
 # Step 5: Predict phenotype
 rule process_encoder:
@@ -66,5 +67,4 @@ rule process_encoder:
     output:
         os.path.join(PHENOTYPE_OUTPUT_DIR, "{sample}.Phenotype_Pred.tsv")
     shell:
-        "python3 ./bin/5_ML_Pred.py {input} {output}"
-
+        "python3 ./bin/5_ML_Pred.py {input} {output} --ref-dir {REF_DIR}"

@@ -4,9 +4,12 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Seq2Pheno_User_Manual</title>
+  <title>Seq2Pheno User Manual</title>
   <style>
     html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
       color: #1a1a1a;
       background-color: #fdfdfd;
     }
@@ -25,16 +28,13 @@
     @media (max-width: 600px) {
       body {
         font-size: 0.9em;
-        padding: 12px;
+        padding: 1em;
       }
       h1 {
         font-size: 1.8em;
       }
     }
     @media print {
-      html {
-        background-color: white;
-      }
       body {
         background-color: transparent;
         color: black;
@@ -58,10 +58,6 @@
       color: #1a1a1a;
     }
     img {
-      max-width: 100%;
-    }
-    svg {
-      height: auto;
       max-width: 100%;
     }
     h1, h2, h3, h4, h5, h6 {
@@ -88,10 +84,9 @@
       color: #606060;
     }
     code {
-      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
       font-size: 85%;
       margin: 0;
-      hyphens: manual;
     }
     pre {
       margin: 1em 0;
@@ -107,8 +102,8 @@
      overflow: visible;
     }
     hr {
+      background-color: #1a1a1a;
       border: none;
-      border-top: 1px solid #1a1a1a;
       height: 1px;
       margin: 1em 0;
     }
@@ -156,18 +151,12 @@
     div.columns{display: flex; gap: min(4vw, 1.5em);}
     div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
+    ul.task-list{list-style: none;}
     ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
       width: 0.8em;
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
     }
-    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
-    /* CSS for syntax highlighting */
-    html { -webkit-text-size-adjust: 100%; }
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -231,9 +220,16 @@
     code span.va { color: #19177c; } /* Variable */
     code span.vs { color: #4070a0; } /* VerbatimString */
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
 </head>
 <body>
+<header id="title-block-header">
+<h1 class="title">Seq2Pheno User Manual</h1>
+</header>
 <h1 align="center">
 Seq2Pheno: an AI/ML-based pipeline to predict tissue phenotypes from
 RNA-seq data
@@ -274,7 +270,7 @@ fibrosis burden, IHC optical density for α-SMA, CD163, IBA-1, MAC387,
 TNF-α, and PAX7).</p>
 <hr />
 <h2 id="tool-structure">📂 Tool Structure</h2>
-<pre><code>Seq2Pheno/
+<pre><code>Seq2Pheno_2.0/
 ├── Snakefile
 ├── Run_snakemake.sh
 ├── bin/
@@ -283,6 +279,10 @@ TNF-α, and PAX7).</p>
 │   ├── 3_log10_transform.py
 │   ├── 4_Encoder.py
 │   └── 5_ML_Pred.py
+├── train/
+│   ├── seq2pheno_train.py
+│   ├── Run_user_training.example.sh
+│   └── README.md
 ├── Input_files/
 │   ├── Sandbox_CMP_Trunk_01.tsv
 │   └── Sandbox_CMP_Trunk_02.tsv
@@ -303,6 +303,14 @@ TNF-α, and PAX7).</p>
 │   ├── Encoder/...
 │   └── Pred_Phenotype/...
 └── Outputs_&lt;timestamp&gt;/ (generated automatically)</code></pre>
+<p>Seq2Pheno 2.0 keeps two workflows separate:</p>
+<ol type="1">
+<li><strong>Prediction workflow</strong>: the original Snakemake
+pipeline using the bundled <code>Ref/</code> models.</li>
+<li><strong>User training workflow</strong>: a separate Python pipeline
+under <code>train/</code> that creates a custom reference directory such
+as <code>User_Training_Run/Ref/</code>.</li>
+</ol>
 <hr />
 <h2 id="system-requirements">⚙️ System Requirements</h2>
 <ul>
@@ -491,9 +499,137 @@ models in <code>Ref/*/Best_Model.txt</code> to produce final
 predictions.</li>
 </ol>
 <hr />
+<h2 id="seq2pheno-2.0-train-models-with-your-own-data">🧬 Seq2Pheno 2.0:
+Train Models With Your Own Data</h2>
+<p>Seq2Pheno 2.0 adds a separate training pipeline for users who have
+their own RNA-seq CPM matrix and matched phenotype measurements. This
+training pipeline does <strong>not</strong> overwrite the bundled
+<code>Ref/</code> directory. It writes a new custom reference directory
+that can later be used by the same prediction Snakemake workflow.</p>
+<h3 id="training-input-1-expression-cpm-matrix">Training Input 1:
+Expression CPM Matrix</h3>
+<p>The expression matrix must be tab-separated, with samples as rows and
+genes as columns. The first column is the sample ID column unless a
+different column is specified.</p>
+<pre><code>Sample  GeneA   GeneB   GeneC
+S1  10.2    0   5.5
+S2  3.1 8.4 0
+S3  0   1.4 22.0</code></pre>
+<h3 id="training-input-2-phenotype-table">Training Input 2: Phenotype
+Table</h3>
+<p>The phenotype table must be tab-separated. The first column is the
+sample ID column unless a different column is specified. Every numeric
+non-sample column is trained as a phenotype by default.</p>
+<pre><code>Sample  Fibrosis    CD163   My_New_Phenotype
+S1  12.4    0.31    5.0
+S2  9.8 0.22    7.1
+S3  14.0    0.40    6.3</code></pre>
+<p>Sample IDs must match between the expression and phenotype files.
+Samples without a value for a given phenotype are dropped only for that
+phenotype model.</p>
+<h3 id="recommended-directory-layout">Recommended Directory Layout</h3>
+<pre><code>Seq2Pheno_2.0/
+├── Training_Input/
+│   ├── my_training_cpm.tsv
+│   └── my_phenotypes.tsv
+├── train/
+│   └── seq2pheno_train.py
+└── User_Training_Run/          # generated by the training command</code></pre>
+<h3 id="run-user-training">Run User Training</h3>
+<p>From the <code>Seq2Pheno_2.0/</code> directory:</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> train/seq2pheno_train.py <span class="dt">\</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--expression-cpm</span> Training_Input/my_training_cpm.tsv <span class="dt">\</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--phenotypes</span> Training_Input/my_phenotypes.tsv <span class="dt">\</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--output-dir</span> User_Training_Run</span></code></pre></div>
+<p>To train only selected phenotype columns:</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> train/seq2pheno_train.py <span class="dt">\</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--expression-cpm</span> Training_Input/my_training_cpm.tsv <span class="dt">\</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--phenotypes</span> Training_Input/my_phenotypes.tsv <span class="dt">\</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--phenotype-columns</span> Fibrosis,CD163 <span class="dt">\</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--output-dir</span> User_Training_Run</span></code></pre></div>
+<p>If the sample ID columns are not named or positioned the same
+way:</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> train/seq2pheno_train.py <span class="dt">\</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--expression-cpm</span> Training_Input/my_training_cpm.tsv <span class="dt">\</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--phenotypes</span> Training_Input/my_phenotypes.tsv <span class="dt">\</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--expression-sample-column</span> Sample <span class="dt">\</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--phenotype-sample-column</span> Biopsy_ID <span class="dt">\</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--output-dir</span> User_Training_Run</span></code></pre></div>
+<h3 id="training-outputs">Training Outputs</h3>
+<pre><code>User_Training_Run/
+├── Ref/
+│   ├── Gene_names_with_order.tsv
+│   ├── Reference_Rank_Ave_CPM.tsv
+│   ├── scaler_parameters.tsv
+│   ├── encoder_model.h5
+│   ├── Fibrosis/
+│   │   ├── Best_Model.txt
+│   │   └── final_*_model.*
+│   └── CD163/
+│       ├── Best_Model.txt
+│       └── final_*_model.*
+├── Preprocessed/
+│   ├── training.gene_filter_order.tsv
+│   ├── training.Ref_Normalized_CPM.tsv
+│   └── training.log10_Ref_Normalized_CPM.tsv
+├── Autoencoder/
+│   ├── autoencoder_model.h5
+│   ├── encoder_model.h5
+│   ├── encoded_features.tsv
+│   ├── reconstructed_data.tsv
+│   ├── reconstruction_errors.tsv
+│   └── training_history.tsv
+├── Phenotype_Models/
+│   ├── phenotype_training_summary.tsv
+│   └── &lt;Phenotype&gt;/
+│       ├── 2_Predicted_vs_Observed.tsv
+│       ├── 2_crossval_performance_metrics_all_models.tsv
+│       ├── Best_Model.txt
+│       └── final_*_model.*
+└── training_manifest.json</code></pre>
+<p>The most important output is:</p>
+<pre><code>User_Training_Run/Ref/</code></pre>
+<p>This directory contains the gene order, reference normalization
+values, scaler parameters, encoder, phenotype model folders, and
+<code>Best_Model.txt</code> files needed for prediction.</p>
+<h3 id="use-a-user-trained-model-for-prediction">Use a User-Trained
+Model for Prediction</h3>
+<p>Place new CPM files for prediction in <code>Input_files/</code> using
+the same input format as the original workflow:</p>
+<pre><code>Input_files/
+└── My_New_Cohort.tsv</code></pre>
+<p>Then run the normal prediction workflow while pointing Seq2Pheno to
+the custom reference:</p>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="va">SEQ2PHENO_REF_DIR</span><span class="op">=</span>User_Training_Run/Ref <span class="ex">snakemake</span> <span class="at">--cores</span> 8</span></code></pre></div>
+<p>The generated output will contain phenotype columns matching the
+custom trained phenotypes:</p>
+<pre><code>Outputs_&lt;timestamp&gt;/Pred_Phenotype/My_New_Cohort.Phenotype_Pred.tsv</code></pre>
+<h3 id="important-notes-for-user-training">Important Notes for User
+Training</h3>
+<ul>
+<li>The training CPM matrix should represent the same type of expression
+unit expected by Seq2Pheno: counts per million (CPM).</li>
+<li>The custom <code>Ref/</code> generated by training should be used
+for future prediction on compatible data from the same gene space and
+preprocessing assumptions.</li>
+<li>More matched samples generally make cross-validation model selection
+more reliable.</li>
+<li>By default, Seq2Pheno trains Random Forest, Gradient Boosting, SVR,
+Ridge Regression, Lasso Regression, and Neural Network models, then
+selects the model with the highest cross-validation Spearman correlation
+for each phenotype.</li>
+<li>To skip neural-network phenotype predictors while still training the
+autoencoder, add <code>--skip-neural-network</code>.</li>
+</ul>
+<hr />
 <h2 id="citation">📝 Citation</h2>
-<p>Jiang, P. et al. (2025) <em>Seq2Pheno: Predicting Tissue Phenotypes
-from RNA-seq Data.</em></p>
+<p>Jiang, P. et al. (2026) <em>Seq2Pheno: An AI/ML Farmwork to Predict
+Immunological and Histological Tissue Phenotypes from RNA-seq
+Data</em></p>
 <hr />
 <h2 id="license">⚖️ License</h2>
 <p>Seq2Pheno tool is licensed under the <strong>Non-Commercial MIT

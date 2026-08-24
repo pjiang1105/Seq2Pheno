@@ -25,8 +25,8 @@ def process_chunk(chunk, ref_cpm, n_jobs):
     return pd.DataFrame(results, index=chunk.index, columns=chunk.columns)
 
 # Main processing function
-def main(input_file, output_file, n_jobs=4, chunksize=50000):
-    ref_file = './Ref/Reference_Rank_Ave_CPM.tsv'
+def main(input_file, output_file, n_jobs=4, chunksize=50000, ref_dir="./Ref"):
+    ref_file = os.path.join(ref_dir, 'Reference_Rank_Ave_CPM.tsv')
     ref_cpm = load_ref(ref_file)
 
     reader = pd.read_csv(input_file, sep='\t', chunksize=chunksize)
@@ -51,6 +51,7 @@ if __name__ == '__main__':
     parser.add_argument('output_file', help='Output file to save normalized results')
     parser.add_argument('--n_jobs', type=int, default=4, help='Number of parallel jobs (default: 4)')
     parser.add_argument('--chunksize', type=int, default=50000, help='Rows per chunk for processing (default: 50000)')
+    parser.add_argument('--ref-dir', default='./Ref', help='Reference directory containing Reference_Rank_Ave_CPM.tsv')
 
     args = parser.parse_args()
-    main(args.input_file, args.output_file, args.n_jobs, args.chunksize)
+    main(args.input_file, args.output_file, args.n_jobs, args.chunksize, args.ref_dir)

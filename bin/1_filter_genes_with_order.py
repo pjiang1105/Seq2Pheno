@@ -2,9 +2,8 @@ import pandas as pd
 import os
 import argparse
 
-def reorder_genes(input_file, output_file=None):
-    # Hardcoded gene order file
-    gene_order_file = "./Ref/Gene_names_with_order.tsv"
+def reorder_genes(input_file, output_file=None, ref_dir="./Ref"):
+    gene_order_file = os.path.join(ref_dir, "Gene_names_with_order.tsv")
 
     # Read input data and gene order
     cmp_df = pd.read_csv(input_file, sep='\t')
@@ -60,6 +59,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Reorder gene columns in a TSV file based on hardcoded reference gene list. Unmatched genes will be filled with 0.")
     parser.add_argument("input_file", help="Input TSV file to process")
     parser.add_argument("-o", "--output", help="Optional output file path for reordered TSV")
+    parser.add_argument("--ref-dir", default="./Ref", help="Reference directory containing Gene_names_with_order.tsv")
 
     args = parser.parse_args()
-    reorder_genes(args.input_file, args.output)
+    reorder_genes(args.input_file, args.output, args.ref_dir)
